@@ -218,7 +218,7 @@ This project is licensed under the MIT License - see LICENSE file for details
 - [LangChain](https://www.langchain.com/) - LLM framework
 - [FAISS](https://github.com/facebookresearch/faiss) - Vector search
 - [OpenRouter](https://openrouter.ai/) - LLM API
-- [HuggingFace](https://huggingface.co/) - Embedding models
+- [Google Gemini API](https://aistudio.google.com/) - Embedding models
 - [Flask](https://flask.palletsprojects.com/) - Web framework
 
 
