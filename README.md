@@ -2,6 +2,8 @@
 
 A premium AI-powered document analysis and question-answering system built with Flask, LangChain, and FAISS. Upload PDF documents and ask intelligent questions with context-aware responses powered by advanced language models.
 
+
+
 ## ✨ Features
 
 - **📄 Document Upload** - Drag-and-drop PDF file upload
@@ -215,11 +217,6 @@ This project is licensed under the MIT License - see LICENSE file for details
 - [HuggingFace](https://huggingface.co/) - Embedding models
 - [Flask](https://flask.palletsprojects.com/) - Web framework
 
-## 📧 Contact & Support
-
-For issues, questions, or suggestions:
-- Open an [Issue](https://github.com/yourusername/agentic-rag-assistant/issues)
-- Email: your.email@example.com
 
 ## 🔄 Roadmap
 
