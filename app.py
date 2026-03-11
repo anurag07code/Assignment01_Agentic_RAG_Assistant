@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import FakeEmbeddings 
+from langchain_community.embeddings import FakeEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings 
 
 # Load variables from .env
 load_dotenv()
@@ -14,7 +15,12 @@ load_dotenv()
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
-embeddings = FakeEmbeddings(size=384)
+#embeddings = FakeEmbeddings(size=384)
+embeddings = GoogleGenerativeAIEmbeddings(
+    # CHANGE THIS LINE:
+    model="models/gemini-embedding-001", 
+    google_api_key=os.getenv("GOOGLE_API_KEY")
+)
 
 vector_db = None
 full_text = ""
