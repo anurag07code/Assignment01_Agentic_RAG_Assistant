@@ -1,0 +1,16 @@
+Flask==2.3.3
+Flask-Cors==4.0.0
+python-dotenv==1.0.0
+requests==2.31.0
+langchain==0.1.0
+langchain-community==0.0.1
+langchain-openai==0.0.1
+PyPDF2==3.0.1
+pypdf==3.17.1
+faiss-cpu==1.7.4
+sentence-transformers==2.2.2
+huggingface-hub==0.17.3
+transformers==4.34.0
+torch==2.1.0
+numpy==1.24.3
+urllib3==2.0.7

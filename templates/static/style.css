@@ -1,0 +1,65 @@
+/* style.css */
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    max-width: 850px; 
+    margin: auto; 
+    padding: 30px; 
+    background-color: #f9f9f9;
+    line-height: 1.6;
+}
+
+h1 { color: #2c3e50; text-align: center; }
+
+.box { 
+    background: white;
+    border: 1px solid #e0e0e0; 
+    padding: 20px; 
+    border-radius: 12px; 
+    margin-bottom: 25px; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+#response { 
+    background: #ffffff; 
+    padding: 20px; 
+    border-radius: 8px;
+    border-left: 5px solid #3498db;
+    min-height: 100px;
+}
+
+#toolInfo { 
+    color: #3498db; 
+    font-weight: bold; 
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+
+.answer-content b, .answer-content strong { color: #e67e22; } /* Highlights API names */
+.answer-content ul { padding-left: 20px; }
+
+.metadata { 
+    font-size: 0.85em; 
+    color: #7f8c8d; 
+    margin-top: 15px; 
+    font-style: italic;
+}
+
+hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover { background-color: #2980b9; }
+
+input[type="text"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}

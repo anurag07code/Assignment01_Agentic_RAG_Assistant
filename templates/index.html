@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic RAG Assistant</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Global Header -->
+    <div class="global-header">
+        <div class="header-content">
+            <h1>🤖 Agentic RAG Assistant</h1>
+            <p>AI-Powered Document Analysis & Q&A Engine</p>
+        </div>
+        <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+            <span class="theme-icon">◐</span>
+        </button>
+    </div>
+
+    <div class="app-container">
+        <!-- Left Panel: Upload & Document Preview -->
+        <div class="left-panel">
+            <div class="header-left">
+                <h1>📄 Documents</h1>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="section upload-section">
+                <h2><span class="icon">📤</span> Upload Document</h2>
+                <div class="upload-box">
+                    <label class="file-input-label" for="fileInput">
+                        <span>📁 Click or drag and drop</span>
+                    </label>
+                    <input type="file" id="fileInput" accept=".pdf">
+                    <div class="file-name" id="fileName"></div>
+                    <button onclick="uploadFile()">Process Document</button>
+                    <div class="status idle" id="status">Ready to upload</div>
+                </div>
+            </div>
+
+            <!-- Document Preview Section -->
+            <div class="section document-preview-section" id="documentPreviewSection" style="display: none;">
+                <h2><span class="icon">📋</span> Document Preview</h2>
+                <div class="document-preview" id="documentPreview">
+                    <div class="preview-content">
+                        <div class="preview-icon">📄</div>
+                        <div class="preview-name" id="previewName"></div>
+                        <div class="preview-status" id="previewStatus">Processing...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Query Section -->
+            <div class="section query-section">
+                <h2><span class="icon">✨</span> Ask a Question</h2>
+                <div class="query-box">
+                    <div class="input-wrapper">
+                        <input type="text" id="queryInput" placeholder="Ask about the document..." autocomplete="off">
+                        <button onclick="askAgent()" id="sendBtn" class="send-btn">
+                            <span>Send</span>
+                        </button>
+                    </div>
+                    <div class="status idle" id="queryStatus">Type a question</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Chat History -->
+        <div class="right-panel">
+            <div class="header-right">
+                <h1>💬 Conversations</h1>
+            </div>
+            <div class="chat-history" id="chatHistory">
+                <div class="empty-state">
+                    <p>💭 No conversations yet</p>
+                    <p>Upload a document and start asking questions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let conversationCount = 0;
+        let documentLoaded = false;
+
+        // File input change handler
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || '';
+            document.getElementById('fileName').innerText = fileName ? `✓ ${fileName}` : '';
+        });
+
+        // Drag and drop support
+        const fileLabel = document.querySelector('.file-input-label');
+        fileLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileLabel.style.borderColor = '#a78bfa';
+            fileLabel.style.background = 'rgba(139, 92, 246, 0.1)';
+        });
+
+        fileLabel.addEventListener('dragleave', () => {
+            fileLabel.style.borderColor = '#8b5cf6';
+            fileLabel.style.background = '';
+        });
+
+        fileLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileLabel.style.borderColor = '#8b5cf6';
+            fileLabel.style.background = '';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('fileInput').files = files;
+                document.getElementById('fileName').innerText = `✓ ${files[0].name}`;
+            }
+        });
+
+        // Enter key in query input
+        document.getElementById('queryInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                askAgent();
+            }
+        });
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            if (!fileInput.files[0]) {
+                updateStatus('status', 'Please select a file first', 'error');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            updateStatus('status', 'Processing your document...', 'loading');
+
+            try {
+                const res = await fetch('/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                
+                if (data.status === 'Success') {
+                    updateStatus('status', '✓ Knowledge base ready!', 'success');
+                    documentLoaded = true;
+                    
+                    // Show document preview
+                    document.getElementById('documentPreviewSection').style.display = 'block';
+                    document.getElementById('previewName').textContent = file.name;
+                    document.getElementById('previewStatus').textContent = '✓ Document processed and indexed';
+                    
+                    // Clear chat history when new document is uploaded
+                    conversationCount = 0;
+                    document.getElementById('chatHistory').innerHTML = '<div class="empty-state"><p>💭 New conversation started</p><p>Ask your first question about the document</p></div>';
+                    
+                    // Focus on query input
+                    document.getElementById('queryInput').focus();
+                } else {
+                    updateStatus('status', 'Error: ' + data.message, 'error');
+                }
+            } catch (err) {
+                updateStatus('status', 'Failed to upload document', 'error');
+            }
+        }
+
+        async function askAgent() {
+            if (!documentLoaded) {
+                updateStatus('queryStatus', 'Please upload a document first', 'error');
+                return;
+            }
+
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) {
+                updateStatus('queryStatus', 'Please enter a question', 'error');
+                return;
+            }
+
+            // Add user message to chat
+            const userMessageId = `user-${Date.now()}`;
+            addMessageToChat(query, 'user', userMessageId);
+            document.getElementById('queryInput').value = '';
+            updateStatus('queryStatus', 'Processing your query...', 'loading');
+
+            // Disable input while processing
+            document.getElementById('queryInput').disabled = true;
+            document.getElementById('sendBtn').disabled = true;
+
+            try {
+                const res = await fetch('/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                const data = await res.json();
+
+                // Convert Markdown to HTML
+                const cleanHTML = marked.parse(data.answer);
+
+                // Create assistant message with metadata
+                const assistantContent = `
+                    <div class="answer-content">${cleanHTML}</div>
+                    <div class="message-metadata">
+                        <div class="meta-badge"><strong>🛠️</strong> ${data.tool}</div>
+                        <div class="meta-badge"><strong>🤖</strong> ${data.model}</div>
+                        <div class="meta-badge"><strong>📌</strong> ${data.citations}</div>
+                    </div>
+                `;
+
+                addMessageToChat(assistantContent, 'assistant', `assistant-${Date.now()}`, true);
+                updateStatus('queryStatus', 'Ready for next question', 'success');
+            } catch (err) {
+                addMessageToChat('❌ Error connecting to the agent. Please try again.', 'assistant', `error-${Date.now()}`);
+                updateStatus('queryStatus', 'Error processing query', 'error');
+            } finally {
+                document.getElementById('queryInput').disabled = false;
+                document.getElementById('sendBtn').disabled = false;
+                document.getElementById('queryInput').focus();
+            }
+        }
+
+        function addMessageToChat(content, role, id, isHTML = false) {
+            const chatHistory = document.getElementById('chatHistory');
+            
+            // Remove empty state if exists
+            const emptyState = chatHistory.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            conversationCount++;
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.id = id;
+
+            if (isHTML) {
+                messageDiv.innerHTML = content;
+            } else {
+                messageDiv.textContent = content;
+            }
+
+            chatHistory.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function updateStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.className = `status ${type}`;
+            element.innerText = message;
+        }
+
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.querySelector('.theme-icon');
+        const htmlElement = document.documentElement;
+
+        // Check for saved theme preference or default to dark
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        htmlElement.setAttribute('data-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+
+        themeToggle.addEventListener('click', function() {
+            const theme = htmlElement.getAttribute('data-theme');
+            const newTheme = theme === 'dark' ? 'light' : 'dark';
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            themeIcon.textContent = theme === 'dark' ? '◑' : '◐';
+        }
+    </script>
+</body>
+</html>
