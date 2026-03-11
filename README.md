@@ -3,6 +3,10 @@
 A premium AI-powered document analysis and question-answering system built with Flask, LangChain, and FAISS. Upload PDF documents and ask intelligent questions with context-aware responses powered by advanced language models.
 
 
+https://github.com/user-attachments/assets/6207e949-8ce8-4c31-bc7a-b243f0b7b520
+
+
+
 
 ## ✨ Features
 
