@@ -234,4 +234,4 @@ For issues, questions, or suggestions:
 
 ---
 
-**Made with ❤️ | Last Updated: March 2026**
+**Last Updated: March 2026**
