@@ -22,7 +22,7 @@ https://github.com/user-attachments/assets/6207e949-8ce8-4c31-bc7a-b243f0b7b520
 ## 🛠️ Tech Stack
 
 - **Backend**: Python, Flask
-- **AI/ML**: LangChain, FAISS, HuggingFace Embeddings
+- **AI/ML**: LangChain, FAISS, Google Gemini API Embeddings
 - **LLM**: OpenRouter (Free tier with multiple models)
 - **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
 - **Vector Database**: FAISS (Facebook AI Similarity Search)
@@ -116,7 +116,7 @@ agentic-rag-assistant/
 
 ### Key Settings (in app.py)
 - `UPLOAD_FOLDER` - Directory for uploaded PDFs (default: `uploads/`)
-- `Embedding Model` - HuggingFace model: `all-MiniLM-L6-v2`
+- `Embedding Model` - Google Gemini API: `gemini-embedding-001`
 - `Chunk Size` - Document chunk size: `1000` tokens
 - `Chunk Overlap` - Overlap between chunks: `100` tokens
 - `Search Results` - Number of retrieved chunks: `3`
@@ -125,7 +125,7 @@ agentic-rag-assistant/
 
 1. **Document Processing**
    - PDF is loaded and split into chunks
-   - Chunks are embedded using HuggingFace embeddings
+   - Chunks are embedded using Google Gemini API embeddings
    - Embeddings are stored in FAISS vector database
 
 2. **Query Processing**
@@ -161,11 +161,6 @@ Submit a question about the uploaded document
 Serve the main HTML interface
 
 ## 🚨 Troubleshooting
-
-### Model Download Issues
-- First run downloads embedding model (~150MB)
-- Takes 1-2 minutes on first execution
-- Set `HF_TOKEN` environment variable for higher download limits
 
 ### PDF Upload Errors
 - Ensure file is a valid PDF
