@@ -72,8 +72,15 @@ def upload_file():
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     chunks = splitter.split_documents(pages)
     
+    # --- FIX START ---
+    # 1. First, create the database in RAM
     vector_db = FAISS.from_documents(chunks, embeddings)
-    return jsonify({"status": "Success", "message": "Knowledge Base Ready!"})
+    
+    # 2. Then, save it to the disk folder
+    vector_db.save_local("faiss_index") 
+    # --- FIX END ---
+    
+    return jsonify({"status": "Success", "message": "Knowledge Base ready in RAM and saved to disk!"})
 
 @app.route('/ask', methods=['POST'])
 def ask():
@@ -91,6 +98,22 @@ def ask():
         ans, model_name = call_llm(system_msg, f"Summarize this: {full_text[:12000]}")
         tool = "Summarize Tool"
         citations = "Full Document"
+
+    elif any(word in query.lower() for word in ["visualize", "flowchart", "diagram", "chart", "map"]):
+        docs = vector_db.similarity_search(query, k=3)
+        context = "\n".join([d.page_content for d in docs])
+        
+        system_msg = (
+            "You are a technical architect. Create a visualization of the process described in the context.\n"
+            "1. Use a Mermaid.js 'graph TD' flowchart to show the logic.\n"
+            "2. If the data is better suited for a table, provide a Markdown table.\n"
+            "3. Provide a brief 2-sentence explanation of the visualization.\n"
+            "4. Wrap Mermaid code in ```mermaid blocks."
+        )
+        
+        ans, model_name = call_llm(system_msg, f"Context: {context}\nQuery: Create a visualization for: {query}")
+        tool = "Visualization Tool"
+        citations = f"Pages: {', '.join(sorted(list(set([str(d.metadata.get('page', 0) + 1) for d in docs]))))}"
     else:
         docs = vector_db.similarity_search(query, k=3)
         page_numbers = sorted(list(set([str(d.metadata.get('page', 0) + 1) for d in docs])))

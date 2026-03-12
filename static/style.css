@@ -614,6 +614,29 @@ button:disabled {
     color: var(--accent);
 }
 
+.mermaid {
+    background: var(--surface-light);
+    padding: 15px;
+    border-radius: 12px;
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    overflow-x: auto; /* Adds horizontal scroll if the chart is too wide */
+}
+
+/* Ensure the SVG scales within the message bubble */
+.mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+/* Adjustments for Light Theme readability */
+html[data-theme="light"] .mermaid {
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
 /* Loading Animation */
 @keyframes spin {
     from {
