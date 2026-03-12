@@ -32,6 +32,33 @@ def call_llm(system, user):
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     
     data = {
+        "model": "nvidia/nemotron-3-super-120b-a12b-20230311:free",
+        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]
+    }
+    
+    try:
+        res = requests.post(url, headers=headers, json=data, timeout=60, verify=False)
+        response_json = res.json()
+
+        # 1. Use .get() so it returns None instead of crashing if 'choices' is missing
+        response_data = response_json.get('choices')
+
+        # 2. Check if we actually got an answer
+        if response_data:
+            return response_data[0]['message']['content'], "nvidia/nemotron-3-super-120b"
+        
+        # 3. If we didn't get an answer, find out why from the error key
+        error_message = response_json.get('error', {}).get('message', 'AI Busy')
+        return f"Limit Reached: {error_message}", "Error"
+
+    except Exception as e:
+        return f"Connection Failed: {str(e)}", "Network Error"
+'''def call_llm(system, user):
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+    
+    data = {
         "model": "openrouter/free",
         "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]
     }
@@ -50,7 +77,7 @@ def call_llm(system, user):
         
         return content, model_used
     except Exception as e:
-        return f"LLM Error: {str(e)}", "Error"
+        return f"LLM Error: {str(e)}", "Error"'''
 
 @app.route('/')
 def home():
