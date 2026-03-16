@@ -1,6 +1,9 @@
 # 🤖 Agentic RAG Assistant
 
-A premium AI-powered document analysis and question-answering system built with Flask, LangChain, and FAISS. Upload PDF documents and ask intelligent questions with context-aware responses powered by advanced language models.
+An **Agentic Retrieval-Augmented Generation (RAG)** document analysis system built with **Flask, LangChain, FAISS, and modern LLMs**.
+
+Upload PDF documents and interact with them using natural language. The system intelligently routes user queries to specialized tools like **Summarization, Q&A, and Visualization** using an **Agent Dispatcher**.
+
 
 
 https://github.com/user-attachments/assets/6207e949-8ce8-4c31-bc7a-b243f0b7b520
@@ -10,14 +13,16 @@ https://github.com/user-attachments/assets/6207e949-8ce8-4c31-bc7a-b243f0b7b520
 
 ## ✨ Features
 
-- **📄 Document Upload** - Drag-and-drop PDF file upload
-- **🔍 Intelligent Retrieval** - FAISS vector database for semantic search
-- **🤖 AI-Powered Q&A** - Context-aware answers using language models
-- **💬 Chat Interface** - ChatGPT-like conversation experience
-- **🎨 Dark/Light Theme** - Beautiful UI with theme toggle
-- **📌 Source Citations** - Automatic citation of relevant document pages
-- **⚡ Real-time Processing** - Instant document embedding and indexing
-- **📱 Responsive Design** - Works seamlessly on desktop and mobile
+- 📄 **PDF Document Upload**
+- 🔍 **Semantic Search with FAISS Vector Database**
+- 🤖 **AI-powered Document Q&A**
+- 🧠 **Agentic Tool Routing**
+- 📊 **Visualization Tool (Flowcharts / Diagrams)**
+- 📌 **Automatic Page Citations**
+- ⚡ **Real-time Embedding & Indexing**
+- 💬 **Chat-style Query Interface**
+- 🎨 **Dark / Light Theme UI**
+- 📱 **Responsive Frontend**
 
 ## 🛠️ Tech Stack
 
@@ -91,8 +96,9 @@ The app will be available at `http://127.0.0.1:5000`
 
 ```
 agentic-rag-assistant/
-├── app.py                 # Flask application & API routes
-├── requirements.txt       # Python dependencies
+├── app.py                # API routes
+├── processor.py          # Flask application 
+├── requirements.txt      # Python dependencies
 ├── .gitignore            # Git ignore rules
 ├── .env                  # Environment variables (not committed)
 ├── README.md             # This file
